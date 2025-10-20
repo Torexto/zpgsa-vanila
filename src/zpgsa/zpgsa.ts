@@ -84,6 +84,7 @@ export default class Zpgsa {
       this.routes = routes;
 
       this.setupStopsLayer();
+      this.updateBuses();
       setInterval(() => this.updateBuses(), 1000);
 
       return this;
