@@ -3,10 +3,6 @@
     {
       "source": "/api/buses",
       "destination": "http://bielawa.trapeze.fi/bussit/web?command=olmapvehicles&action=getVehicles"
-    },
-    {
-      "source": "/api/routes/:route",
-      "destination": "http://bielawa.trapeze.fi/bussit/web?command=olmap&action=getRouteStops&route=:route"
     }
   ]
 }
