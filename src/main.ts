@@ -1,4 +1,5 @@
 import Zpgsa from "./zpgsa";
+// @ts-ignore
 import {registerSW} from "virtual:pwa-register"
 
 const updateSW = registerSW({
