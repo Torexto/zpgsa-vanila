@@ -66,6 +66,8 @@ export default class Zpgsa {
    private currentRoute: L.Polyline | null = null;
    private currentRouteBusId: string | null = null;
 
+   private busIntervalId: number | null = null;
+
    private constructor() {
       /* empty */
    }
@@ -85,9 +87,26 @@ export default class Zpgsa {
 
       this.setupStopsLayer();
       await this.updateBuses();
-      setInterval(() => this.updateBuses(), 1000);
+
+      this.handleBusInterval();
+      document.addEventListener('visibilitychange', () => this.handleBusInterval());
 
       return this;
+   }
+
+   handleBusInterval() {
+      const isVisible = document.visibilityState === 'visible';
+
+      if (isVisible) {
+         if (this.busIntervalId) return;
+         this.busIntervalId = setInterval(() => this.updateBuses(), 1000);
+         console.log('Interval uruchomiony');
+      } else {
+         if (!this.busIntervalId) return;
+         clearInterval(this.busIntervalId);
+         this.busIntervalId = null;
+         console.log('Interval zatrzymany');
+      }
    }
 
    private createMap(mapId: string): L.Map {
