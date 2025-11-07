@@ -6,8 +6,8 @@ const updateSW = registerSW({
    immediate: true,
    onNeedRefresh() {
       console.log("Nowa wersja dostępna. Odświeżam.");
-      updateSW(); // aktywuje nowego SW
-      window.location.reload(); // reload strony
+      updateSW();
+      window.location.reload();
    },
    onOfflineReady() {
       console.log("Aplikacja gotowa offline");
