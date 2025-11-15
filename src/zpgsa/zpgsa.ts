@@ -209,7 +209,7 @@ export default class Zpgsa {
       const buses = await this.fetchBuses();
 
       if (!buses) {
-         showToast("Błąd po stronie ZPGSA")
+         showToast("Nie można połączyć się serwerem ZPGSA")
          this.buses?.clear();
          return;
       }
