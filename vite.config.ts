@@ -1,5 +1,6 @@
 import {defineConfig} from 'vite';
 import {VitePWA} from 'vite-plugin-pwa';
+import vercel from 'vite-plugin-vercel';
 
 export default defineConfig({
    server: {
@@ -13,6 +14,7 @@ export default defineConfig({
       }
    },
    plugins: [
+      vercel(),
       VitePWA({
          registerType: 'autoUpdate',
          manifest: {
