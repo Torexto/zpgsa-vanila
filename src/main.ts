@@ -6,7 +6,7 @@ const updateSW = registerSW({
    immediate: true,
    onNeedRefresh() {
       console.log("Nowa wersja dostępna. Odświeżam.");
-      updateSW();
+      updateSW().then(undefined);
       window.location.reload();
    },
    onOfflineReady() {

@@ -10,6 +10,7 @@ import toBus from './toBus';
 import filterStopDetails from './filterStopDetails';
 
 import type {Bus, Route, Stop, StopDetailsBus, ZpgsaBus} from './types';
+import {showToast} from "../utils/toast.ts";
 
 function createBusPopup(bus: Bus) {
    return `
@@ -194,19 +195,26 @@ export default class Zpgsa {
    }
 
    private async fetchBuses() {
-      return await fetch("/api/buses")
-         .then((res) => res.json())
-         .then((zpgsaBuses: ZpgsaBus[]) => zpgsaBuses.map(toBus))
-         .then((buses) => (
-               buses.reduce(
-                  (map, bus) => map.set(bus.id, bus),
-                  new Map<string, Bus>())
-            )
-         );
+      return fetch("/api/buses")
+         .then(res => res.json())
+         .then((data: ZpgsaBus[]) => data.map(toBus))
+         .then(buses => buses.reduce(
+            (map, bus) => map.set(bus.id, bus),
+            new Map<string, Bus>()
+         ))
+         .catch(() => null);
    }
 
    private async updateBuses() {
-      this.buses = await this.fetchBuses();
+      const buses = await this.fetchBuses();
+
+      if (!buses) {
+         showToast("Błąd po stronie ZPGSA")
+         this.buses?.clear();
+         return;
+      }
+
+      this.buses = buses;
       this.buses.forEach(bus => {
          const busMarker = this.busMarkers.get(bus.id);
 
