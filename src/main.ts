@@ -1,6 +1,9 @@
 import Zpgsa from "./zpgsa";
 // @ts-ignore
 import {registerSW} from "virtual:pwa-register"
+import {inject} from "@vercel/analytics";
+
+inject();
 
 const updateSW = registerSW({
    immediate: true,
