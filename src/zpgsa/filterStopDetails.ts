@@ -1,57 +1,152 @@
 import {DateTime} from 'luxon';
 import type {StopDetailsBus} from './types';
 
-interface DayMonth {
-   day: number;
-   month: number;
+interface DateRange {
+   from: DateTime;
+   to: DateTime;
 }
 
-const daysFreeFromSchool: DayMonth[] = [
-   {day: 26, month: 12}, {day: 27, month: 12}, {day: 30, month: 12},
-   {day: 31, month: 12}, {day: 2, month: 1}, {day: 3, month: 1}, {day: 3, month: 2},
-   {day: 4, month: 2}, {day: 5, month: 2}, {day: 6, month: 2}, {day: 7, month: 2},
-   {day: 10, month: 2}, {day: 11, month: 2}, {day: 12, month: 2}, {day: 13, month: 2},
-   {day: 14, month: 2}, {day: 22, month: 4},
-   {day: 30, month: 6}, {day: 1, month: 7}, {day: 2, month: 7}, {day: 3, month: 7}, {day: 4, month: 7},
-   {day: 7, month: 7}, {day: 8, month: 7}, {day: 9, month: 7}, {day: 10, month: 7}, {day: 11, month: 7},
-   {day: 14, month: 7}, {day: 15, month: 7}, {day: 16, month: 7}, {day: 17, month: 7}, {day: 18, month: 7},
-   {day: 21, month: 7}, {day: 22, month: 7}, {day: 23, month: 7}, {day: 24, month: 7}, {day: 25, month: 7},
-   {day: 28, month: 7}, {day: 29, month: 7}, {day: 30, month: 7}, {day: 31, month: 7}, {day: 1, month: 8},
-   {day: 4, month: 8}, {day: 5, month: 8}, {day: 6, month: 8}, {day: 7, month: 8}, {day: 8, month: 8},
-   {day: 11, month: 8}, {day: 12, month: 8}, {day: 13, month: 8}, {day: 14, month: 8},
-   {day: 18, month: 8}, {day: 19, month: 8}, {day: 20, month: 8}, {day: 21, month: 8}, {day: 22, month: 8},
-   {day: 25, month: 8}, {day: 26, month: 8}, {day: 27, month: 8}, {day: 28, month: 8}, {day: 29, month: 8},
+const easterSunday = (year: number): DateTime => {
+   const a = year % 19;
+   const b = Math.floor(year / 100);
+   const c = year % 100;
+   const d = Math.floor(b / 4);
+   const e = b % 4;
+   const f = Math.floor((b + 8) / 25);
+   const g = Math.floor((b - f + 1) / 3);
+   const h = (19 * a + b - d - g + 15) % 30;
+   const i = Math.floor(c / 4);
+   const k = c % 4;
+   const l = (32 + 2 * e + 2 * i - h - k) % 7;
+   const m = Math.floor((a + 11 * h + 22 * l) / 451);
+   const month = Math.floor((h + l - 7 * m + 114) / 31);
+   const day = ((h + l - 7 * m + 114) % 31) + 1;
+
+   return DateTime.local(year, month, day);
+};
+
+const movableHolidays = (year: number): DateTime[] => {
+   const easter = easterSunday(year);
+
+   return [
+      easter.minus({days: 2}), // Wielki Piątek
+      easter.minus({days: 1}),
+      easter,                  // Niedziela Wielkanocna
+      easter.plus({days: 1}),  // Poniedziałek Wielkanocny
+      easter.plus({days: 49}), // Zielone Świątki
+      easter.plus({days: 60})  // Boże Ciało
+   ];
+};
+
+const fixedHolidays = (year: number): DateTime[] => [
+   DateTime.local(year, 1, 1),
+   DateTime.local(year, 1, 6),
+   DateTime.local(year, 5, 1),
+   DateTime.local(year, 5, 3),
+   DateTime.local(year, 8, 15),
+   DateTime.local(year, 11, 1),
+   DateTime.local(year, 12, 25),
+   DateTime.local(year, 12, 26)
 ];
 
-const holidays: DayMonth[] = [
-   {day: 6, month: 1}, {day: 19, month: 6}, {day: 1, month: 11}, {day: 1, month: 1}, {day: 6, month: 1}, {
-      day: 23,
-      month: 12
-   },
-   {day: 24, month: 12}, {day: 25, month: 12}, {day: 17, month: 4}, {day: 18, month: 4}, {day: 19, month: 4}, {
-      day: 20,
-      month: 4
-   },
-   {day: 21, month: 4}, {day: 1, month: 5}, {day: 3, month: 5}, {day: 15, month: 8}
+const holidaysForYear = (year: number): DateTime[] => [
+   ...fixedHolidays(year),
+   ...movableHolidays(year)
 ];
 
 const isHoliday = (date: DateTime): boolean => {
-   return holidays.some(
-      d => d.day === date.day && d.month === date.month
+   return holidaysForYear(date.year).some(h =>
+      h.hasSame(date, 'day')
    );
 };
 
+const getSummerBrakeStart = (year: number): DateTime => {
+   let date = DateTime.local(year, 6, 30);
+   while (date.weekday !== 5) {
+      date = date.minus({days: 1});
+   }
+   return date.plus({days: 1});
+};
+
+const getWinterBrakeStart = (year: number): DateTime => {
+   if (year === 2025) {
+      return DateTime.local(year, 2, 3);
+   }
+
+   if (year === 2026) {
+      return DateTime.local(year, 2, 2);
+   }
+
+   if (year === 2027) {
+      return DateTime.local(year, 1, 18);
+   }
+
+   throw new Error('Brak daty dla roku ' + year);
+}
+
+const getChristmasBrakeStart = (year: number): DateTime => {
+   let date = DateTime.local(year, 12, 24);
+   while (date.weekday !== 1) {
+      date = date.minus({days: 1});
+   }
+   return date;
+};
+
+const SchoolBreaks = (year: number): DateRange[] => {
+   const summerBrakeStart = getSummerBrakeStart(year);
+
+   const summerBrake = {
+      from: summerBrakeStart,
+      to: DateTime.local(year, 8, 31)
+   };
+
+   const winterBrakeStart = getWinterBrakeStart(year);
+
+   const winterBrake = {
+      from: winterBrakeStart,
+      to: winterBrakeStart.plus({days: 13})
+   }
+
+   const christmasBrakeStart = getChristmasBrakeStart(year);
+
+   const christmasBrake = {
+      from: christmasBrakeStart,
+      to: DateTime.local(year, 12, 31)
+   }
+
+   return [
+      summerBrake,
+      winterBrake,
+      christmasBrake
+   ];
+};
+
 const isFreeFromSchool = (date: DateTime): boolean => {
-   return daysFreeFromSchool.some(
-      d => d.day === date.day && d.month === date.month
+   const isSchoolBrake = SchoolBreaks(date.year).some(r =>
+      date >= r.from.startOf('day') &&
+      date <= r.to.endOf('day')
    );
+
+   const localEasterSunday = easterSunday(date.year);
+
+   const daysFreeFromSchool: DateTime[] = [
+      localEasterSunday.minus({days: 3}),
+      localEasterSunday.plus({days: 2}),
+   ];
+
+   const dayFreeFromSchool = daysFreeFromSchool.some(d => {
+      return date.day === d.day && date.month === d.month;
+   });
+
+   return isSchoolBrake || dayFreeFromSchool;
 };
 
 const matchesOperatingDay = (
    bus: StopDetailsBus,
-   date: DateTime
+   date: DateTime,
+   holiday: boolean
 ): boolean => {
-   if (isHoliday(date)) {
+   if (holiday) {
       return bus.operating_days === 'sunday';
    }
 
@@ -102,7 +197,7 @@ export default function filterStopDetails(
    const now = DateTime.now();
 
    const today = buses
-      .filter(bus => matchesOperatingDay(bus, now))
+      .filter(bus => matchesOperatingDay(bus, now, isHoliday(now)))
       .filter(bus => matchesSchoolRestriction(bus, now))
       .map(bus => ({bus, dt: busDateTime(bus, now)}))
       .filter(e => e.dt && e.dt >= now)
@@ -116,7 +211,7 @@ export default function filterStopDetails(
    const tomorrowDate = now.plus({days: 1});
 
    const tomorrow = buses
-      .filter(bus => matchesOperatingDay(bus, tomorrowDate))
+      .filter(bus => matchesOperatingDay(bus, tomorrowDate, isHoliday(tomorrowDate)))
       .filter(bus => matchesSchoolRestriction(bus, tomorrowDate))
       .map(bus => ({bus, dt: busDateTime(bus, tomorrowDate)}))
       .filter(e => e.dt)
