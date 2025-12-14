@@ -20,12 +20,15 @@ export interface Stop {
   href: string;
 }
 
+export type OperatingDays = 'mon_fri' | 'saturday' | 'sunday';
+export type SchoolRestriction = 'normal' | 'school_only' | 'free_day_only';
+
 export interface StopDetailsBus {
   time: string;
   line: string;
   destination: string;
-  operating_days: string;
-  school_restriction: string;
+  operating_days: OperatingDays;
+  school_restriction: SchoolRestriction;
 }
 
 export interface Route {
