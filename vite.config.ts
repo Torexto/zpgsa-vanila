@@ -44,6 +44,7 @@ export default defineConfig({
             skipWaiting: true,
             clientsClaim: true,
             maximumFileSizeToCacheInBytes: 10485760,
+            globIgnores: ['**/api/**'],
             runtimeCaching: [
                {
                   urlPattern: /^\/api\//,
