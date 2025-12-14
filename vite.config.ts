@@ -41,22 +41,32 @@ export default defineConfig({
             ]
          },
          workbox: {
+            skipWaiting: true,
+            clientsClaim: true,
             maximumFileSizeToCacheInBytes: 10485760,
-            globPatterns: [
-               '**/*.{js,css,html,png,jpg,jpeg,svg,gif,woff2,woff,ttf,webmanifest,json}'
-            ],
             runtimeCaching: [
                {
                   urlPattern: /^\/api\//,
                   handler: 'NetworkOnly',
+               },
+
+               {
+                  urlPattern: ({request}) => request.mode === 'navigate',
+                  handler: 'NetworkFirst',
                   options: {
-                     cacheName: 'api-cache',
-                     expiration: {
-                        maxEntries: 50,
-                        maxAgeSeconds: 60 * 60 * 24 // 1 dzień
-                     }
-                  }
-               }
+                     cacheName: 'html',
+                     networkTimeoutSeconds: 1,
+                  },
+               },
+
+               {
+                  urlPattern: /\.(js|xml|txt|css|html|webmanifest|png|jpg|svg|json|woff2?)$/,
+                  handler: 'NetworkFirst',
+                  options: {
+                     cacheName: 'assets',
+                     networkTimeoutSeconds: 3,
+                  },
+               },
             ]
          }
       })
