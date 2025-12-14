@@ -54,11 +54,18 @@ const holidaysForYear = (year: number): DateTime[] => [
    ...movableHolidays(year)
 ];
 
-const isHoliday = (date: DateTime): boolean => {
-   return holidaysForYear(date.year).some(h =>
-      h.hasSame(date, 'day')
-   );
-};
+const holidaysCache: Record<number, DateTime[]> = {};
+
+const holidaysForYearCached = (year: number) => {
+   if (!holidaysCache[year]) {
+      holidaysCache[year] = holidaysForYear(year);
+   }
+   return holidaysCache[year];
+}
+
+const isHoliday = (date: DateTime): boolean =>
+   holidaysForYearCached(date.year).some(h => h.hasSame(date, 'day'));
+
 
 const getSummerBrakeStart = (year: number): DateTime => {
    let date = DateTime.local(year, 6, 30);
