@@ -1,5 +1,5 @@
 ﻿import {expect, test} from "vitest";
-import {easterSunday, getChristmasBrakeStart} from "./filterStopDetails.ts";
+import {getChristmasBrakeStart} from "./filterStopDetails.ts";
 
 test("easter", () => {
    const year = 2025
