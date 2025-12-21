@@ -58,16 +58,16 @@ const holidaysCache: Record<number, DateTime[]> = {};
 
 const holidaysForYearCached = (year: number) => {
    if (!holidaysCache[year]) {
-      holidaysCache[year] = holidaysForYear(year);
+      holidaysCache[year] = holidaysForYear(year).map(d => d.startOf('day'));
    }
    return holidaysCache[year];
 }
 
-const isHoliday = (date: DateTime): boolean =>
+export const isHoliday = (date: DateTime): boolean =>
    holidaysForYearCached(date.year).some(h => h.hasSame(date, 'day'));
 
 
-export const getSummerBrakeStart = (year: number): DateTime => {
+export const getSummerBreakStart = (year: number): DateTime => {
    let date = DateTime.local(year, 6, 30);
    while (date.weekday !== 5) {
       date = date.minus({days: 1});
@@ -75,61 +75,55 @@ export const getSummerBrakeStart = (year: number): DateTime => {
    return date.plus({days: 1});
 };
 
-export const getWinterBrakeStart = (year: number): DateTime => {
-   if (year === 2025) {
-      return DateTime.local(year, 2, 3);
-   }
+const winterBreakByYear: Record<number, DateTime> = {
+   2025: DateTime.local(2025, 2, 3),
+   2026: DateTime.local(2026, 2, 2),
+   2027: DateTime.local(2027, 1, 18)
+};
 
-   if (year === 2026) {
-      return DateTime.local(year, 2, 2);
-   }
-
-   if (year === 2027) {
-      return DateTime.local(year, 1, 18);
-   }
-
-   throw new Error('Brak daty dla roku ' + year);
-}
-
-export const getChristmasBrakeStart = (year: number): DateTime => {
-   let date = DateTime.local(year, 12, 24);
-   while (date.weekday !== 1) {
-      date = date.minus({days: 1});
+export const getWinterBreakStart = (year: number): DateTime => {
+   const date = winterBreakByYear[year];
+   if (!date) {
+      throw new Error(`Brak ferii zimowych dla roku ${year}`);
    }
    return date;
 };
 
-const SchoolBreaks = (year: number): DateRange[] => {
-   const summerBrakeStart = getSummerBrakeStart(year);
+export const getChristmasBreakStart = (year: number): DateTime => {
+   return DateTime.local(year, 12, 24).startOf('week');
+};
 
-   const summerBrake = {
-      from: summerBrakeStart,
+const SchoolBreaks = (year: number): DateRange[] => {
+   const summerBreakStart = getSummerBreakStart(year);
+
+   const summerBreak = {
+      from: summerBreakStart,
       to: DateTime.local(year, 8, 31)
    };
 
-   const winterBrakeStart = getWinterBrakeStart(year);
+   const winterBreakStart = getWinterBreakStart(year);
 
-   const winterBrake = {
-      from: winterBrakeStart,
-      to: winterBrakeStart.plus({days: 13})
+   const winterBreak = {
+      from: winterBreakStart,
+      to: winterBreakStart.plus({days: 13})
    }
 
-   const christmasBrakeStart = getChristmasBrakeStart(year);
+   const christmasBreakStart = getChristmasBreakStart(year);
 
-   const christmasBrake = {
-      from: christmasBrakeStart,
+   const christmasBreak = {
+      from: christmasBreakStart,
       to: DateTime.local(year, 12, 31)
    }
 
    return [
-      summerBrake,
-      winterBrake,
-      christmasBrake
+      summerBreak,
+      winterBreak,
+      christmasBreak
    ];
 };
 
 const isFreeFromSchool = (date: DateTime): boolean => {
-   const isSchoolBrake = SchoolBreaks(date.year).some(r =>
+   const isSchoolBreak = SchoolBreaks(date.year).some(r =>
       date >= r.from.startOf('day') &&
       date <= r.to.endOf('day')
    );
@@ -141,11 +135,9 @@ const isFreeFromSchool = (date: DateTime): boolean => {
       localEasterSunday.plus({days: 2}),
    ];
 
-   const dayFreeFromSchool = daysFreeFromSchool.some(d => {
-      return date.day === d.day && date.month === d.month;
-   });
+   const dayFreeFromSchool = daysFreeFromSchool.some(d => date.hasSame(d, 'day'));
 
-   return isSchoolBrake || dayFreeFromSchool;
+   return isSchoolBreak || dayFreeFromSchool;
 };
 
 const matchesOperatingDay = (
@@ -153,11 +145,7 @@ const matchesOperatingDay = (
    date: DateTime,
    holiday: boolean
 ): boolean => {
-   if (holiday) {
-      return bus.operating_days === 'sunday';
-   }
-
-   if (date.weekday === 7) {
+   if (holiday || date.weekday === 7) {
       return bus.operating_days === 'sunday';
    }
 
@@ -193,18 +181,27 @@ const busDateTime = (
    return t.set({
       year: date.year,
       month: date.month,
-      day: date.day
+      day: date.day,
+      second: 0,
+      millisecond: 0
    });
 };
 
-export function filterBusForDay(date: DateTime, buses: StopDetailsBus[]): StopDetailsBus[] {
+export function filterBusForDay(date: DateTime, buses: StopDetailsBus[], today: boolean = false): StopDetailsBus[] {
    return buses
-      .filter(bus => matchesOperatingDay(bus, date, isHoliday(date)))
-      .filter(bus => matchesSchoolRestriction(bus, date))
-      .map(bus => ({bus, dt: busDateTime(bus, date)}))
-      .filter(e => e.dt && e.dt >= date)
-      .sort((a, b) => a.dt!.toMillis() - b.dt!.toMillis())
-      .map(e => e.bus);
+      .map(bus => {
+         if (!matchesOperatingDay(bus, date, isHoliday(date))) return null;
+         if (!matchesSchoolRestriction(bus, date)) return null;
+
+         const dt = busDateTime(bus, date);
+         if (!dt) return null;
+
+         if (today && dt < date) return null;
+         return {bus, dt};
+      })
+      .filter(Boolean)
+      .sort((a, b) => a!.dt!.toMillis() - b!.dt!.toMillis())
+      .map(e => e!.bus);
 }
 
 export default function filterStopDetails(
@@ -213,7 +210,7 @@ export default function filterStopDetails(
 ): StopDetailsBus[] {
    const now = DateTime.now();
 
-   const today = filterBusForDay(now, buses);
+   const today = filterBusForDay(now, buses, true);
 
    if (today.length >= limit) {
       return today.slice(0, limit);
