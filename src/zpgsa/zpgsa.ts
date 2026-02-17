@@ -67,7 +67,7 @@ export default class Zpgsa {
    private currentRoute: L.Polyline | null = null;
    private currentRouteBusId: string | null = null;
 
-   private busIntervalId: number | null = null;
+   private busIntervalId: NodeJS.Timeout | null = null;
 
    private constructor() {
       /* empty */
