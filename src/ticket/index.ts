@@ -84,7 +84,6 @@ export function showTicket() {
 
    QRCode.toCanvas(qrcodeCanvas, `https://zpgsa.vercel.app/ticket?state=${stateStr}`, {
       width: 256,
-      version: 6,
       errorCorrectionLevel: 'H'
    });
    el.querySelector(".ticket-close-btn")?.addEventListener("click", () => el.remove());
