@@ -1,0 +1,13 @@
+﻿#ticketBtn {
+    position: fixed;
+    display: block;
+    right: 10px;
+    top: 10px;
+
+    z-index: 100;
+
+    cursor: pointer;
+
+    width: 30px;
+    height: 30px;
+}

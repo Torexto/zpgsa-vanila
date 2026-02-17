@@ -10,7 +10,7 @@ import toBus from './toBus';
 import filterStopDetails from './filterStopDetails';
 
 import type {Bus, Route, Stop, StopDetailsBus, ZpgsaBus} from './types';
-import {showToast} from "../utils/toast.ts";
+import {showToast} from "../toast/toast.ts";
 
 function createBusPopup(bus: Bus) {
    return `

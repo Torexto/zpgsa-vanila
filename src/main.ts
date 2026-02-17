@@ -2,19 +2,23 @@ import Zpgsa from "./zpgsa";
 // @ts-ignore
 import {registerSW} from "virtual:pwa-register"
 import {inject} from "@vercel/analytics";
+import {showSummary, showTicket} from "./ticket";
+import "./index.css";
 
 inject();
 
-const updateSW = registerSW({
-   immediate: true,
-   onNeedRefresh() {
-      console.log("Nowa wersja dostępna. Odświeżam.");
-      updateSW().then(undefined);
-      window.location.reload();
-   },
-   onOfflineReady() {
-      console.log("Aplikacja gotowa offline");
-   }
-})
+const path = window.location.pathname.replace(/\/+$/, "") || "/";
+if (path === "/ticket") {
+   const searchParams = new URL(window.location.href).searchParams;
 
-await Zpgsa.new("map");
+   const stateStr = searchParams.get("state")
+   if (!stateStr) {
+      document.querySelector("#ticketBtn")?.addEventListener("click", showTicket);
+      await Zpgsa.new("map");
+   } else {
+      showSummary(stateStr);
+   }
+} else {
+   document.querySelector("#ticketBtn")?.addEventListener("click", showTicket);
+   await Zpgsa.new("map");
+}

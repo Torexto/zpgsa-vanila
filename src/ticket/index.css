@@ -1,0 +1,41 @@
+﻿.ticket {
+    width: 100vw;
+    height: 100vh;
+    background: white;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    z-index: 99999;
+
+    font-family: sans-serif;
+}
+
+.ticket-header {
+    display: flex;
+
+    align-items: center;
+
+    background: #206fe2;
+    color: white;
+
+    height: 50px;
+
+    font-size: 0.8rem;
+}
+
+.ticket-body {
+    padding: 10px;
+}
+
+.ticket-body-title {
+    color: gray;
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+.ticket-body-qrcode {
+    display: flex;
+    justify-content: center;
+}
