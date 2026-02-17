@@ -164,7 +164,6 @@ export default class Zpgsa {
 
    private createStopMarker(stop: Stop) {
       const marker = new L.Marker(L.latLng(stop.lat, stop.lon));
-      marker.bindPopup(new L.Popup());
 
       marker.on("contextmenu", (e) => {
          if (platform.os?.family === "iOS") {
@@ -185,11 +184,11 @@ export default class Zpgsa {
          window.open(stop.href);
       });
 
-      marker.on('click', () => {
+      marker.bindPopup(() => {
          const stopDetails = this.stopsDetails?.[stop.id] ?? [];
          const filteredStopDetails = filterStopDetails(stopDetails);
-         marker.getPopup()?.setContent(createStopPopup(stop, filteredStopDetails));
-      });
+         return createStopPopup(stop, filteredStopDetails);
+      })
 
       return marker;
    }
