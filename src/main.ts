@@ -8,14 +8,18 @@ import "./index.css";
 inject();
 
 const path = window.location.pathname.replace(/\/+$/, "") || "/";
+console.log(path);
 if (path === "/ticket") {
    const searchParams = new URL(window.location.href).searchParams;
 
    const stateStr = searchParams.get("state")
+   console.log(stateStr);
    if (!stateStr) {
+      console.log(1)
       document.querySelector("#ticketBtn")?.addEventListener("click", showTicket);
       await Zpgsa.new("map");
    } else {
+      console.log(2)
       showSummary(stateStr);
    }
 } else {

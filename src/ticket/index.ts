@@ -18,6 +18,7 @@ function getRandomInt(min: number, max: number) {
 export function showTicket() {
    const el = document.createElement('div');
    el.className = 'ticket';
+   el.style.fontFamily = "sans-serif;";
    document.body.appendChild(el);
 
    const start = DateTime.now().minus({minutes: Math.random() * 5});
@@ -82,7 +83,10 @@ export function showTicket() {
    const elapsedEl = el.querySelector(".ticket-body-elapsed")! as HTMLDivElement;
    const remainingEl = el.querySelector(".ticket-body-remaining")! as HTMLDivElement;
 
-   QRCode.toCanvas(qrcodeCanvas, `https://zpgsa.vercel.app/ticket?state=${stateStr}`, {
+   const baseUrl = window.location.origin;
+   const url = `${baseUrl}/ticket?state=${stateStr}`;
+   console.log(url);
+   QRCode.toCanvas(qrcodeCanvas, url, {
       width: 256,
       errorCorrectionLevel: 'H'
    });
@@ -109,6 +113,9 @@ export function showSummary(stateStr?: string) {
    const start = DateTime.fromISO(state.startIso);
 
    const el = document.createElement('div');
+   el.className = 'ticket';
+   el.style.fontSize = "3em";
+   el.style.padding = "8px";
    el.innerHTML = `
    Bielawa ZPG (ZKM)
    <br>
