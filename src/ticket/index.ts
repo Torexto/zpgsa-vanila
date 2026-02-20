@@ -38,11 +38,17 @@ export function showTicket() {
 
    el.innerHTML = `
    <div class="ticket-header">
-     <button class="ticket-close-btn">X</button>
-     <h1>Szczegóły biletu</h1>
+     <button class="ticket-close-btn">\
+        <span class="material-symbols-outlined">
+            arrow_back
+        </span>
+     </button>
+     <h2>Szczegóły biletu</h2>
    </div>
    <div class="ticket-body">
-     <div class="ticket-body-gif"><hr></div>
+     <div class="ticket-body-gif">
+        <img src="./assets/img/bielawa.png" alt="""/>
+     </div>
      
      <div class="ticket-body-qrcode">
          <canvas></canvas>
@@ -65,7 +71,9 @@ export function showTicket() {
      <div class="ticket-body-title">Numer kontrolny:</div>
      <div class="ticket-body-content">32${code}</div>
      
-     <div class="ticket-body-gif"><hr></div>
+     <div class="ticket-body-gif">
+        <img src="./assets/img/bielawa.png" alt="""/>
+     </div>
      
      <div class="ticket-body-title">Cena:</div>
      <div class="ticket-body-content">2,40 zł</div>

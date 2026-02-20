@@ -20,16 +20,26 @@
     background: #0c59b8;
     color: white;
 
-    height: 50px;
+    height: 56px;
 
     font-size: 0.8rem;
 
     font-family: sans-serif;
 }
 
+.ticket-close-btn {
+    cursor: pointer;
+    background: transparent;
+    outline: none;
+    border: none;
+    padding-left: 10px;
+    padding-right: 30px;
+}
+
 .ticket-body {
     padding: 10px;
     font-family: "Roboto", sans-serif;
+    font-weight: 500;
 }
 
 .ticket-body-title {
@@ -41,4 +51,32 @@
 .ticket-body-qrcode {
     display: flex;
     justify-content: center;
+}
+
+.ticket-body-gif {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+}
+
+.ticket-body-gif > img {
+    position: absolute;
+    width: 20px;
+    left: -40px;
+
+    animation: linear slide 5s infinite;
+}
+
+@keyframes slide {
+    0% {
+        transform: translate(0);
+    }
+    70% {
+        transform: translate(calc(100vw + 40px));
+    }
+    100% {
+        transform: translate(calc(100vw + 40px));
+    }
 }
