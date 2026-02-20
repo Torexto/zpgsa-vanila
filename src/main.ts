@@ -15,11 +15,13 @@ if (path === "/ticket") {
    const stateStr = searchParams.get("state")
    console.log(stateStr);
    if (!stateStr) {
-      console.log(1)
       document.querySelector("#ticketBtn")?.addEventListener("click", showTicket);
       await Zpgsa.new("map");
    } else {
-      console.log(2)
+      const meta = document.querySelector('meta[name="viewport"]');
+      if (meta) {
+         meta.remove();
+      }
       showSummary(stateStr);
    }
 } else {

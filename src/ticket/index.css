@@ -1,4 +1,6 @@
-﻿.ticket {
+﻿@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+.ticket {
     width: 100vw;
     height: 100vh;
     background: white;
@@ -15,20 +17,23 @@
 
     align-items: center;
 
-    background: #206fe2;
+    background: #0c59b8;
     color: white;
 
     height: 50px;
 
     font-size: 0.8rem;
+
+    font-family: sans-serif;
 }
 
 .ticket-body {
     padding: 10px;
+    font-family: "Roboto", sans-serif;
 }
 
 .ticket-body-title {
-    color: gray;
+    color: #797979;
     font-size: 0.8rem;
     margin-top: 10px;
 }

@@ -18,7 +18,6 @@ function getRandomInt(min: number, max: number) {
 export function showTicket() {
    const el = document.createElement('div');
    el.className = 'ticket';
-   el.style.fontFamily = "sans-serif;";
    document.body.appendChild(el);
 
    const start = DateTime.now().minus({minutes: Math.random() * 5});
@@ -125,7 +124,7 @@ export function showSummary(stateStr?: string) {
    2,40 PLN</b>
    <br>
    Data zakupu: ${start.toFormat("dd.MM.yyyy'r.' HH:mm:ss")}<br>
-   Data ważności: <b style="color:red;">${start.plus({minutes: state.durationMin}).toFormat("dd.MM.yyyy'r.' HH:mm:ss")}</b>
+   Data ważności: <b style="color:${start.diffNow().minutes <= state.durationMin ? "green" : "red"};">${start.plus({minutes: state.durationMin}).toFormat("dd.MM.yyyy'r.' HH:mm:ss")}</b>
    <br>
    Kod: 32${state.code}
    <br>
