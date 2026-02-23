@@ -10,24 +10,24 @@ inject();
 const path = window.location.pathname.replace(/\/+$/, "") || "/";
 console.log(path);
 if (path === "/ticket") {
-   const searchParams = new URL(window.location.href).searchParams;
+    const searchParams = new URL(window.location.href).searchParams;
 
-   const stateStr = searchParams.get("state")
-   console.log(stateStr);
-   if (!stateStr) {
-      document.querySelector("#ticketBtn")?.addEventListener("click", showTicket);
-      await Zpgsa.new("map");
-   } else {
-      const meta = document.querySelector('meta[name="viewport"]');
-      if (meta) {
-         meta.remove();
-      }
-      showSummary(stateStr);
-   }
+    const stateStr = searchParams.get("state")
+    console.log(stateStr);
+    if (!stateStr) {
+        document.querySelector("#ticketBtn")?.addEventListener("click", showTicket);
+        await Zpgsa.new("map");
+    } else {
+        const meta = document.querySelector('meta[name="viewport"]');
+        if (meta) {
+            meta.remove();
+        }
+        showSummary(stateStr);
+    }
 } else {
-   document.querySelector("#ticketBtn")?.addEventListener("click", () => {
-    showTicket();
-    document.querySelector("#map").style.visibility = "hidden";
-});
-   await Zpgsa.new("map");
+    document.querySelector("#ticketBtn")?.addEventListener("click", () => {
+        (document.querySelector("#map") as HTMLDivElement).style.visibility = "hidden";
+        showTicket();
+    });
+    await Zpgsa.new("map");
 }

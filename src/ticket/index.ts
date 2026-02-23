@@ -97,7 +97,10 @@ export function showTicket() {
       width: 256,
       errorCorrectionLevel: 'H'
    });
-   el.querySelector(".ticket-close-btn")?.addEventListener("click", () => el.remove());
+   el.querySelector(".ticket-close-btn")?.addEventListener("click", () => {
+      (document.querySelector("#map") as HTMLDivElement).style.visibility = "visible";
+      el.remove()
+   });
 
    function update() {
       const now = DateTime.now();
