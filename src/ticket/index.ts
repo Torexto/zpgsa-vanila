@@ -124,7 +124,7 @@ export function showSummary(stateStr?: string) {
 
    const el = document.createElement('div');
    el.className = 'ticket';
-   el.style.fontSize = "3em";
+   el.style.fontSize = "19px";
    el.style.padding = "8px";
    el.innerHTML = `
    Bielawa ZPG (ZKM)
