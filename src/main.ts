@@ -25,6 +25,9 @@ if (path === "/ticket") {
       showSummary(stateStr);
    }
 } else {
-   document.querySelector("#ticketBtn")?.addEventListener("click", showTicket);
+   document.querySelector("#ticketBtn")?.addEventListener("click", () => {
+    showTicket();
+    document.querySelector("#map").style.visibility = "hidden";
+});
    await Zpgsa.new("map");
 }
