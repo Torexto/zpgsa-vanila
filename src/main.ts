@@ -5,6 +5,7 @@ import {inject} from "@vercel/analytics";
 import {showSummary, showTicket} from "./ticket";
 import "./index.css";
 
+registerSW();
 inject();
 
 const path = window.location.pathname.replace(/\/+$/, "") || "/";
