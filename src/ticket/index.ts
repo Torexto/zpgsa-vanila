@@ -1,42 +1,43 @@
 ﻿import "./index.css";
 import QRCode from "qrcode";
 import {DateTime} from "luxon";
+import {redirectTo} from "../main.ts";
 
 type TicketState = {
-   startIso: string;
-   durationMin: number;
-   nr: number;
-   code: number;
+    startIso: string;
+    durationMin: number;
+    nr: number;
+    code: number;
 }
 
 function getRandomInt(min: number, max: number) {
-   min = Math.ceil(min);
-   max = Math.floor(max);
-   return Math.floor(Math.random() * (max - min + 1)) + min;
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function showTicket() {
-   const el = document.createElement('div');
-   el.className = 'ticket';
-   document.body.appendChild(el);
+export function renderTicket() {
+    const el = document.createElement('div');
+    el.className = 'ticket';
+    document.body.appendChild(el);
 
-   const start = DateTime.now().minus({minutes: Math.random() * 5});
-   const durationMin = 30;
-   const expiresAt = start.plus({minutes: durationMin});
+    const start = DateTime.now().minus({minutes: Math.random() * 5});
+    const durationMin = 30;
+    const expiresAt = start.plus({minutes: durationMin});
 
-   const nr = getRandomInt(1000, 9999);
-   const code = getRandomInt(100, 999);
+    const nr = getRandomInt(1000, 9999);
+    const code = getRandomInt(100, 999);
 
-   const state: TicketState = {
-      startIso: start.toISO(),
-      durationMin,
-      nr,
-      code
-   };
+    const state: TicketState = {
+        startIso: start.toISO(),
+        durationMin,
+        nr,
+        code
+    };
 
-   const stateStr = btoa(JSON.stringify(state));
+    const stateStr = btoa(JSON.stringify(state));
 
-   el.innerHTML = `
+    el.innerHTML = `
    <div class="ticket-header">
      <button class="ticket-close-btn">\
         <span class="material-symbols-outlined">
@@ -86,47 +87,44 @@ export function showTicket() {
    </div>
 `;
 
-   const qrcodeCanvas = el.querySelector("div.ticket-body-qrcode > canvas")! as HTMLCanvasElement;
-   const elapsedEl = el.querySelector(".ticket-body-elapsed")! as HTMLDivElement;
-   const remainingEl = el.querySelector(".ticket-body-remaining")! as HTMLDivElement;
+    const qrcodeCanvas = el.querySelector("div.ticket-body-qrcode > canvas")! as HTMLCanvasElement;
+    const elapsedEl = el.querySelector(".ticket-body-elapsed")! as HTMLDivElement;
+    const remainingEl = el.querySelector(".ticket-body-remaining")! as HTMLDivElement;
 
-   const baseUrl = window.location.origin;
-   const url = `${baseUrl}/ticket?state=${stateStr}`;
-   console.log(url);
-   QRCode.toCanvas(qrcodeCanvas, url, {
-      width: 256,
-      errorCorrectionLevel: 'H'
-   });
-   el.querySelector(".ticket-close-btn")?.addEventListener("click", () => {
-      (document.querySelector("#map") as HTMLDivElement).style.visibility = "visible";
-      el.remove()
-   });
+    const baseUrl = window.location.origin;
+    const url = `${baseUrl}/ticketSummary?state=${stateStr}`;
+    console.log(url);
+    QRCode.toCanvas(qrcodeCanvas, url, {
+        width: 256,
+        errorCorrectionLevel: 'H'
+    });
+    el.querySelector(".ticket-close-btn")?.addEventListener("click", () => redirectTo("/"));
 
-   function update() {
-      const now = DateTime.now();
-      elapsedEl.textContent = now.diff(start).toFormat("mm:ss");
-      remainingEl.textContent = expiresAt.diff(now).toFormat("mm:ss");
+    function update() {
+        const now = DateTime.now();
+        elapsedEl.textContent = now.diff(start).toFormat("mm:ss");
+        remainingEl.textContent = expiresAt.diff(now).toFormat("mm:ss");
 
-      const remaining = expiresAt.diff(now);
-      if (remaining.seconds < 0) {
-         el.remove();
-      }
-   }
+        const remaining = expiresAt.diff(now);
+        if (remaining.seconds < 0) {
+            el.remove();
+        }
+    }
 
-   update();
-   setInterval(update, 1000);
+    update();
+    setInterval(update, 1000);
 }
 
 export function showSummary(stateStr?: string) {
-   const state: TicketState = JSON.parse(atob(stateStr ?? ""));
+    const state: TicketState = JSON.parse(atob(stateStr ?? ""));
 
-   const start = DateTime.fromISO(state.startIso);
+    const start = DateTime.fromISO(state.startIso);
 
-   const el = document.createElement('div');
-   el.className = 'ticket';
-   el.style.fontSize = "19px";
-   el.style.padding = "8px";
-   el.innerHTML = `
+    const el = document.createElement('div');
+    el.className = 'ticket';
+    el.style.fontSize = "19px";
+    el.style.padding = "8px";
+    el.innerHTML = `
    Bielawa ZPG (ZKM)
    <br>
    30 min U
@@ -142,5 +140,5 @@ export function showSummary(stateStr?: string) {
    Numer bieżący: 57938${state.nr}
    <br>
    `;
-   document.body.appendChild(el);
+    document.body.appendChild(el);
 }

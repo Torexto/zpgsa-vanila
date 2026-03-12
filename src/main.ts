@@ -1,8 +1,8 @@
 import Zpgsa from "./zpgsa";
-// @ts-ignore
+// @ts-expect-error
 import {registerSW} from "virtual:pwa-register"
 import {inject} from "@vercel/analytics";
-import {showSummary, showTicket} from "./ticket";
+import {showSummary, renderTicket} from "./ticket";
 import "./index.css";
 
 registerSW();
@@ -10,14 +10,47 @@ inject();
 
 const path = window.location.pathname.replace(/\/+$/, "") || "/";
 console.log(path);
-if (path === "/ticket") {
+
+switch (path) {
+    case "/ticketSummary":
+        await renderTicketSummary();
+        break;
+    case "/ticket":
+        renderTicket();
+        break;
+    default:
+        await renderMap();
+}
+
+export function redirectTo(path: string) {
+    window.location.href = path;
+}
+
+async function renderMap() {
+    const mapContainer = document.createElement("div");
+    mapContainer.id = "map";
+
+    const ticketBtn = document.createElement("button");
+    ticketBtn.id = "ticketBtn";
+
+    ticketBtn.addEventListener("click", () => {
+        mapContainer.style.visibility = "hidden";
+        redirectTo("/ticket")
+    });
+
+    document.body.appendChild(mapContainer);
+    document.body.appendChild(ticketBtn);
+
+    await Zpgsa.new("map");
+}
+
+async function renderTicketSummary() {
     const searchParams = new URL(window.location.href).searchParams;
 
-    const stateStr = searchParams.get("state")
-    console.log(stateStr);
+    const stateStr = searchParams.get("state");
+
     if (!stateStr) {
-        document.querySelector("#ticketBtn")?.addEventListener("click", showTicket);
-        await Zpgsa.new("map");
+        redirectTo("/")
     } else {
         const meta = document.querySelector('meta[name="viewport"]');
         if (meta) {
@@ -25,10 +58,4 @@ if (path === "/ticket") {
         }
         showSummary(stateStr);
     }
-} else {
-    document.querySelector("#ticketBtn")?.addEventListener("click", () => {
-        (document.querySelector("#map") as HTMLDivElement).style.visibility = "hidden";
-        showTicket();
-    });
-    await Zpgsa.new("map");
 }

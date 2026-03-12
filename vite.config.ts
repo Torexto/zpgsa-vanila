@@ -44,30 +44,40 @@ export default defineConfig({
             skipWaiting: true,
             clientsClaim: true,
             maximumFileSizeToCacheInBytes: 10485760,
-            globIgnores: ['**/api/**'],
-            runtimeCaching: [
-               {
-                  urlPattern: /^\/api\//,
-                  handler: 'NetworkOnly',
-               },
+            navigateFallback: "/index.html",
 
+            globIgnores: ['**\/api\/**\/*'],
+            globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest}"],
+
+            runtimeCaching: [
                {
                   urlPattern: ({request}) => request.mode === 'navigate',
                   handler: 'NetworkFirst',
                   options: {
-                     cacheName: 'html',
-                     networkTimeoutSeconds: 1,
-                  },
+                     cacheName: 'html'
+                  }
                },
-
                {
-                  urlPattern: /\.(js|xml|txt|css|html|webmanifest|png|jpg|svg|json|woff2?)$/,
+                  urlPattern: /\.(json)$/,
                   handler: 'NetworkFirst',
                   options: {
-                     cacheName: 'assets',
-                     networkTimeoutSeconds: 3,
-                  },
+                     cacheName: 'json'
+                  }
                },
+               {
+                  urlPattern: /\.(js|css)$/,
+                  handler: 'StaleWhileRevalidate',
+                  options: {
+                     cacheName: 'logic'
+                  }
+               },
+               {
+                  urlPattern: /\.(png|xml|txt|webmanifest)/,
+                  handler: 'CacheFirst',
+                  options: {
+                     cacheName: 'assets'
+                  }
+               }
             ]
          }
       })
