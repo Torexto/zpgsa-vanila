@@ -50,6 +50,8 @@ export default defineConfig({
                 globIgnores: ['**\/api\/**\/*'],
                 globPatterns: ["**/*.{js,css,ico,png,svg,webmanifest,json}"],
 
+                ignoreURLParametersMatching: [/.*/],
+
                 runtimeCaching: [
                     {
                         urlPattern: /\.(js|css|json)$/,
