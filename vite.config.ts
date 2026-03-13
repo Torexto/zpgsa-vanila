@@ -16,6 +16,7 @@ export default defineConfig({
    plugins: [
       vercel(),
       VitePWA({
+         injectRegister: 'script-defer',
          registerType: 'autoUpdate',
          manifest: {
             name: "Zpgsa",
