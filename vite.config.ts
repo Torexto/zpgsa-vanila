@@ -45,8 +45,28 @@ export default defineConfig({
                 clientsClaim: true,
                 maximumFileSizeToCacheInBytes: 10485760,
 
+                navigateFallback: "index.html",
+
                 globIgnores: ['**\/api\/**\/*'],
-                globPatterns: ["**/*.{xml,txt,png,webmanifest}"],
+                globPatterns: ["**/*.{js,css,ico,png,svg,webmanifest,json}"],
+
+                runtimeCaching: [
+                    {
+                        urlPattern: /\.(js|css|json)$/,
+                        handler: 'NetworkFirst',
+                        options: {cacheName: 'logic'}
+                    },
+                    {
+                        urlPattern: /\.(png|xml|txt|webmanifest|ico|svg)$/,
+                        handler: 'CacheFirst',
+                        options: {cacheName: 'assets'}
+                    },
+                    {
+                        urlPattern: ({request}) => request.mode === 'navigate',
+                        handler: 'NetworkFirst',
+                        options: {cacheName: 'html'}
+                    }
+                ]
             }
         })
     ]
