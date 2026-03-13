@@ -5,7 +5,7 @@
       "destination": "http://bielawa.trapeze.fi/bussit/web?command=olmapvehicles&action=getVehicles"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!api|assets|sw.js|manifest.webmanifest).*)",
       "destination": "/"
     }
   ]
