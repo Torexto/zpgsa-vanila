@@ -14,7 +14,7 @@ export default defineConfig({
     },
     plugins: [
         VitePWA({
-            injectRegister: 'inline',
+            injectRegister: 'script-defer',
             registerType: 'autoUpdate',
             manifest: {
                 name: "Zpgsa",
