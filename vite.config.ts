@@ -1,6 +1,5 @@
 import {defineConfig} from 'vite';
 import {VitePWA} from 'vite-plugin-pwa';
-import vercel from 'vite-plugin-vercel';
 
 export default defineConfig({
     server: {
@@ -13,16 +12,7 @@ export default defineConfig({
             }
         }
     },
-    vercel: {
-        rewrites: [
-            {
-                "source": "/api/buses",
-                "destination": "http://bielawa.trapeze.fi/bussit/web?command=olmapvehicles&action=getVehicles"
-            }
-        ]
-    },
     plugins: [
-        vercel(),
         VitePWA({
             injectRegister: 'inline',
             registerType: 'autoUpdate',
