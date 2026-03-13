@@ -45,7 +45,8 @@ export default defineConfig({
                 clientsClaim: true,
                 maximumFileSizeToCacheInBytes: 10485760,
 
-
+                globIgnores: ['**\/api\/**\/*'],
+                globPatterns: ["**/*.{xml,txt,png,webmanifest}"],
             }
         })
     ]
