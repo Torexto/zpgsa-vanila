@@ -14,6 +14,7 @@ export default defineConfig({
     },
     plugins: [
         VitePWA({
+            strategies: "generateSW",
             injectRegister: 'script-defer',
             registerType: 'autoUpdate',
             manifest: {
