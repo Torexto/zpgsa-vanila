@@ -45,10 +45,11 @@ export default defineConfig({
             skipWaiting: true,
             clientsClaim: true,
             maximumFileSizeToCacheInBytes: 10485760,
+
             navigateFallback: "/index.html",
 
             globIgnores: ['**\/api\/**\/*'],
-            globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest}"],
+            globPatterns: ["**/*.{js,css,ico,png,svg,webmanifest}"],
 
             runtimeCaching: [
                {
@@ -67,7 +68,7 @@ export default defineConfig({
                },
                {
                   urlPattern: /\.(js|css)$/,
-                  handler: 'StaleWhileRevalidate',
+                  handler: 'NetworkFirst',
                   options: {
                      cacheName: 'logic'
                   }
