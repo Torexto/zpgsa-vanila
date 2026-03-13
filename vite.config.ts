@@ -54,7 +54,6 @@ export default defineConfig({
                 clientsClaim: true,
                 maximumFileSizeToCacheInBytes: 10485760,
 
-                navigateFallback: "/index.html",
 
             }
         })
