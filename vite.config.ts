@@ -48,7 +48,7 @@ export default defineConfig({
                 navigateFallback: "index.html",
 
                 globIgnores: ['**\/api\/**\/*'],
-                globPatterns: ["**/*.{js,css,ico,png,svg,webmanifest,json}"],
+                globPatterns: ["index.html", "**/*.{js,css,ico,png,svg,webmanifest,json}"],
 
                 ignoreURLParametersMatching: [/.*/],
 
